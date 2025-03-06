@@ -41,5 +41,10 @@ def redirect_to_original(short_code):
             return redirect(result[0])
     return "URL not found", 404
 
+import os
+
+port = int(os.environ.get("PORT", 10000))  # 環境変数PORTを取得、なければ10000
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=port)
+
