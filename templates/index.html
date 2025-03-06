@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="description" content="シンプルで無料のURL短縮サービス。短縮リンクを作成して簡単に共有！">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- スマホ対応のための設定 -->
     <title>無料で使えるURL短縮サービス | 短縮リンク作成</title>
     <style>
         /* 全体のスタイル */
@@ -15,8 +16,9 @@
         }
 
         .container {
-            max-width: 500px;
-            margin: 50px auto;
+            max-width: 90%;
+            width: 400px;
+            margin: 10vh auto; /* 画面中央寄せ */
             padding: 20px;
             background: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -25,6 +27,7 @@
 
         h1 {
             color: #333;
+            font-size: 1.8em;
         }
 
         /* フォームのスタイル */
@@ -32,21 +35,23 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            width: 100%;
         }
 
         input {
-            width: 100%;
-            padding: 10px;
+            width: calc(100% - 20px);
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            margin: 0 auto;
         }
 
         button {
             background: #007bff;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
@@ -99,14 +104,11 @@
         @media (max-width: 600px) {
             .container {
                 width: 90%;
+                margin: 5vh auto;
                 padding: 15px;
             }
 
-            input {
-                font-size: 14px;
-            }
-
-            button {
+            input, button {
                 font-size: 14px;
             }
         }
