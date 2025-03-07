@@ -19,6 +19,14 @@ def init_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS blog_posts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT,
+                content TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
 init_db()
 
@@ -120,6 +128,35 @@ def get_history():
         cur.execute("SELECT short, long, created_at FROM urls ORDER BY created_at DESC LIMIT ?", (limit,))
         data = cur.fetchall()
     return jsonify([{"short": row[0], "long": row[1], "created_at": row[2]} for row in data])
+
+# ブログ機能
+@app.route("/blog", methods=["GET"])
+def blog():
+    with sqlite3.connect("database.db") as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id, title, created_at FROM blog_posts ORDER BY created_at DESC")
+        posts = cur.fetchall()
+    return render_template("blog.html", posts=posts)
+
+@app.route("/blog/post", methods=["POST"])
+def post_blog():
+    title = request.form["title"]
+    content = request.form["content"]
+    with sqlite3.connect("database.db") as conn:
+        cur = conn.cursor()
+        cur.execute("INSERT INTO blog_posts (title, content) VALUES (?, ?)", (title, content))
+        conn.commit()
+    return redirect(url_for("blog"))
+
+@app.route("/blog/<int:post_id>")
+def view_blog(post_id):
+    with sqlite3.connect("database.db") as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT title, content, created_at FROM blog_posts WHERE id = ?", (post_id,))
+        post = cur.fetchone()
+    if not post:
+        return "記事が見つかりません", 404
+    return render_template("blog_post.html", title=post[0], content=post[1], created_at=post[2])
 
 # アプリ起動
 port = int(os.environ.get("PORT", 5000))
