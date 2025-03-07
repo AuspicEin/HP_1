@@ -5,22 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL短縮 - URL短縮サービス</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchHistory(5);  // 初回ロード時に5件表示
+
+            document.getElementById("loadMore").addEventListener("click", function () {
+                fetchHistory(50);
+            });
+
+            // 5秒ごとに履歴を自動更新
+            setInterval(() => {
+                fetchHistory(5);
+            }, 60000);
+        });
+
+        function fetchHistory(limit) {
+            let timestamp = new Date().getTime(); // キャッシュ防止
+            fetch(`/history?limit=${limit}&t=${timestamp}`)
+                .then(response => response.json())
+                .then(data => {
+                    let historyList = document.getElementById("historyList");
+                    historyList.innerHTML = ""; 
+                    data.forEach(entry => {
+                        let item = document.createElement("div");
+                        item.classList.add("history-item");
+                        item.innerHTML = `
+                            <p><strong><a href="/${entry.short}" target="_blank">${entry.short}</a></strong></p>
+                            <p class="long-url">${entry.long}</p>
+                            <p class="timestamp">${formatDate(entry.created_at)}</p>
+                        `;
+                        historyList.appendChild(item);
+                    });
+                });
+        }
+
+        function formatDate(dateString) {
+            let date = new Date(dateString);
+            return date.toLocaleString("ja-JP", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
 </head>
 <body>
     <header>
-        <h1>URL短縮サービス</h1>
+        <div class="logo-title">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="サイトロゴ">
+            <h1>URL短縮サービス</h1>
+        </div>
         <nav>
             <ul>
                 <li><a href="{{ url_for('home') }}">ホーム</a></li>
                 <li><a href="{{ url_for('url_shortener') }}">URL短縮</a></li>
             </ul>
         </nav>
-    </header>
+    </header>    
     <main>
         <h2>URLを短縮する</h2>
         <form method="post">
-            <input type="url" name="long_url" placeholder="短縮したいURLを入力" required>
-            <input type="text" name="custom_code" placeholder="カスタム短縮コード (任意)">
+            <div class="input-container">
+                <input type="url" name="long_url" placeholder="短縮したいURLを入力" required>
+                <input type="text" name="custom_code" placeholder="カスタム短縮コード (任意)">
+            </div>
             <button type="submit">短縮</button>
         </form>
         {% if short_url %}
@@ -30,6 +75,13 @@
             <img src="{{ qr_url }}" alt="QRコード">
         </div>
         {% endif %}
+
+        <!-- 最近短縮されたURLの履歴 -->
+        <div class="history-container">
+            <h2>最近短縮されたURL</h2>
+            <div id="historyList"></div>
+            <button id="loadMore">もっと見る</button>
+        </div>
     </main>
 </body>
 </html>

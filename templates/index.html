@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ホーム - URL短縮サービス</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <header>
-        <h1>URL短縮サービス</h1>
+        <div class="logo-title">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="サイトロゴ">
+            <h1>URL短縮サービス</h1>
+        </div>
         <nav>
             <ul>
                 <li><a href="{{ url_for('home') }}">ホーム</a></li>
                 <li><a href="{{ url_for('url_shortener') }}">URL短縮</a></li>
             </ul>
         </nav>
-    </header>
+    </header>    
     <main>
         <h2>ようこそ！</h2>
         <p>このサイトでは、簡単にURLを短縮できます。</p>

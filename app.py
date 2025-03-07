@@ -1,18 +1,36 @@
-from flask import Flask, request, redirect, render_template, send_file, url_for
+from flask import Flask, request, redirect, render_template, send_file, url_for, jsonify
 import sqlite3
 import random
 import string
 import qrcode
 from io import BytesIO
 import os
+import datetime
 
 app = Flask(__name__)
 
 # データベース初期化
 def init_db():
     with sqlite3.connect("database.db") as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS urls (short TEXT PRIMARY KEY, long TEXT)")
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS urls (
+                short TEXT PRIMARY KEY,
+                long TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
 init_db()
+
+# 既存のデータベースを更新（created_at カラムを追加）
+def update_db():
+    with sqlite3.connect("database.db") as conn:
+        try:
+            conn.execute("ALTER TABLE urls ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+        except sqlite3.OperationalError:
+            pass  # すでにカラムがある場合はスキップ
+
+update_db()
 
 # ランダムな短縮コード生成
 def generate_short_code():
@@ -47,9 +65,11 @@ def url_shortener():
                         break
                     short_code = generate_short_code()
 
-            # データベースに保存
+            # データベースに保存（作成日時 included）
+            created_at = datetime.datetime.now()
             try:
-                cur.execute("INSERT INTO urls (short, long) VALUES (?, ?)", (short_code, long_url))
+                cur.execute("INSERT INTO urls (short, long, created_at) VALUES (?, ?, ?)", 
+                            (short_code, long_url, created_at))
                 conn.commit()
             except sqlite3.IntegrityError:
                 return "このカスタムコードは既に使用されています。", 400
@@ -90,6 +110,16 @@ def generate_qrcode(short_code):
     img_io.seek(0)
 
     return send_file(img_io, mimetype='image/png', as_attachment=False)
+
+# 履歴取得API
+@app.route("/history")
+def get_history():
+    limit = request.args.get("limit", default=5, type=int)
+    with sqlite3.connect("database.db") as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT short, long, created_at FROM urls ORDER BY created_at DESC LIMIT ?", (limit,))
+        data = cur.fetchall()
+    return jsonify([{"short": row[0], "long": row[1], "created_at": row[2]} for row in data])
 
 # アプリ起動
 port = int(os.environ.get("PORT", 5000))
