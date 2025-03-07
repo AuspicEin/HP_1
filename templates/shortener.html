@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL短縮 - URL短縮サービス</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>URL短縮サービス</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">ホーム</a></li>
+                <li><a href="{{ url_for('url_shortener') }}">URL短縮</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>URLを短縮する</h2>
+        <form method="post">
+            <input type="url" name="long_url" placeholder="短縮したいURLを入力" required>
+            <input type="text" name="custom_code" placeholder="カスタム短縮コード (任意)">
+            <button type="submit">短縮</button>
+        </form>
+        {% if short_url %}
+        <div class="result">
+            <p>短縮URL: <a href="{{ short_url }}" target="_blank">{{ short_url }}</a></p>
+            <p>QRコード: <a href="{{ qr_url }}" target="_blank">こちら</a></p>
+            <img src="{{ qr_url }}" alt="QRコード">
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>

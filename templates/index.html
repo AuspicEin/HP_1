@@ -2,145 +2,24 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="シンプルで無料のURL短縮サービス。短縮リンクを作成して簡単に共有！">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- スマホ対応のための設定 -->
-    <title>無料で使えるURL短縮サービス | 短縮リンク作成</title>
-    <style>
-        /* 全体のスタイル */
-        body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        .container {
-            max-width: 90%;
-            width: 400px;
-            margin: 10vh auto; /* 画面中央寄せ */
-            padding: 20px;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 1.8em;
-        }
-
-        /* フォームのスタイル */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        input {
-            width: calc(100% - 20px);
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-            margin: 0 auto;
-        }
-
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #0056b3;
-        }
-
-        /* 結果表示のスタイル */
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background: #e3f2fd;
-            border-radius: 5px;
-        }
-
-        .result a {
-            font-size: 18px;
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .result a:hover {
-            text-decoration: underline;
-        }
-
-        /* QRコード表示エリア */
-        .qr-code {
-            margin-top: 15px;
-        }
-
-        .qr-code img {
-            width: 150px;
-            height: 150px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 5px;
-            background: white;
-        }
-
-        /* 広告スペース（オプション） */
-        .ad-space {
-            margin-top: 30px;
-        }
-
-        /* モバイル対応 */
-        @media (max-width: 600px) {
-            .container {
-                width: 90%;
-                margin: 5vh auto;
-                padding: 15px;
-            }
-
-            input, button {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ホーム - URL短縮サービス</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <header>
         <h1>URL短縮サービス</h1>
-        <p>長いURLを短縮して、簡単に共有できます！</p>
-        <form method="POST">
-            <input type="url" name="long_url" required placeholder="長いURLを入力">
-            <input type="text" name="custom_code" placeholder="カスタム短縮コード (任意)">
-            <button type="submit">短縮</button>
-        </form>
-
-        {% if short_url %}
-        <div class="result">
-            <p>短縮URL: <a href="{{ short_url }}" target="_blank">{{ short_url }}</a></p>
-            <div class="qr-code">
-                <p>QRコード:</p>
-                <a href="{{ qr_url }}" target="_blank">
-                    <img src="{{ qr_url }}" alt="QRコード">
-                </a>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- Google AdSense 広告スペース（必要に応じて追加） -->
-        <div class="ad-space">
-            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7186706376691518"
-                crossorigin="anonymous"></script>
-        </div>
-    </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">ホーム</a></li>
+                <li><a href="{{ url_for('url_shortener') }}">URL短縮</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>ようこそ！</h2>
+        <p>このサイトでは、簡単にURLを短縮できます。</p>
+        <a href="{{ url_for('url_shortener') }}" class="button">URLを短縮する</a>
+    </main>
 </body>
 </html>
