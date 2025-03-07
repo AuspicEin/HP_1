@@ -22,7 +22,7 @@
 
         function fetchHistory(limit) {
             let timestamp = new Date().getTime(); // キャッシュ防止
-            fetch(`https://hp-1-c58p.onrender.com/history?limit=${limit}&t=${timestamp}`)
+            fetch(`/history?limit=${limit}&t=${timestamp}`)
                 .then(response => response.json())
                 .then(data => {
                     let historyList = document.getElementById("historyList");
